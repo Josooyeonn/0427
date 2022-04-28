@@ -22,7 +22,7 @@ public class StudentListServ extends HttpServlet {
 		String jsonString = "[";
 		for (int i = 0; i < list.size(); i++) {
 			jsonString += "{\"studentNo\": " + list.get(i).getStudentNo() + ", " + "\"studentName\" : \""
-					+ list.get(i).getStudentName() + ", " + "\",\"eng_score\": " + list.get(i).getEngScore() + ", "
+					+ list.get(i).getStudentName() + "\",\"eng_score\": " + list.get(i).getEngScore() + ", "
 					+ "\"kor_score\":" + list.get(i).getKorScore() + "}";
 
 			if (i != list.size() - 1) {
