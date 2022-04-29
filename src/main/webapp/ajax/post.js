@@ -9,19 +9,19 @@ function init() {
 	let xhtp = new XMLHttpRequest(); // <<<<<<< 중요 >>>>>>>
 	xhtp.open('get', '../StudentList.json');
 	xhtp.send();
-	xhtp.onload = function() {
+	xhtp.onload = function () {
 		let data = JSON.parse(xhtp.responseText);
 		console.log(data);
 
 		let tbodyList = document.getElementById('list');
 
-		data.forEach(function(elem) {
+		data.forEach(function (elem) {
 			let newTr = makeTr(elem)
 			tbodyList.appendChild(newTr);
 		})
 	} //end of onload
 	let modBtn = document.querySelector('input[type="button"]');
-	modBtn.addEventListener('click', function() {
+	modBtn.addEventListener('click', function () {
 		let no = document.querySelector('input[name=sno]').value;
 		let name = document.querySelector('input[name=sname]').value;
 		let eScore = document.querySelector('input[name=eScore]').value;
@@ -30,17 +30,17 @@ function init() {
 		let xhtp = new XMLHttpRequest();
 		xhtp.open('get', `modStudentServlet?a=${no}&b=${name}&c=${eScore}&d=${kScore}`);
 		xhtp.send();
-		xhtp.onload = function() {
+		xhtp.onload = function () {
 			let result = JSON.parse(xhtp.responseText);
 			//
 			if (result.retCode == 'OK') {
 				// 결과값으로 받은 값 => 새로운 tr
-				alert(result.studentNo+'번이 변경되었습니다.')
+				alert(result.studentNo + '번이 변경되었습니다.')
 				let obj = {
-					studentNo : result.studentNo,
-					studentName : result.studentName,
-					engScore : result.engScore,
-					korScore : result.korScore
+					studentNo: result.studentNo,
+					studentName: result.studentName,
+					engScore: result.engScore,
+					korScore: result.korScore
 				}
 				let newTr = makeTr(obj);
 				let oldTr = document.getElementById(result.studentNo)
@@ -77,18 +77,18 @@ function addStudent(e) {
 	let xhtp = new XMLHttpRequest(); // 비동기방식으로 서버의 파일 요청
 	xhtp.open('get', `addStudentServlet?sno=${no}&sname=${name}&eScore=${eng}&kScore=${kor}`); // 두번째가 요청 페이지, get방식으로 요청
 	xhtp.send();
-	xhtp.onload = function() {
+	xhtp.onload = function () {
 		console.log(xhtp.responseText); // {"retCode":"Success"}
 		let result = JSON.parse(xhtp.responseText); // {retCode:"Success"}
 		if (result.retCode == 'Success') {
 			//리스트에 새로운 값 추가
-			successCallBack2(result);//
+			successCallBack2(result); //
 		} else if (result.retCode == 'Fail') {
 			// 처리 중 에러가 발생. (메세지 출력)
 			failCallBack();
 		}
 	} // end of function()
-}// end of addStudent(e)
+} // end of addStudent(e)
 
 function successCallBack2(retObj) {
 
@@ -119,14 +119,14 @@ function makeTr(student) {
 	delBtn.innerHTML = '삭제';
 
 	// 이벤트 등록
-	delBtn.addEventListener('click', function() {
+	delBtn.addEventListener('click', function () {
 		//삭제 (id파악 => ajax호출) : this => 이벤트 대상의 element (delBtn)	
 		let id = this.parentElement.parentElement.firstChild.innerHTML;
 
 		let xhtp = new XMLHttpRequest();
 		xhtp.open('get', 'DelStudentServlet?delId=' + id);
 		xhtp.send();
-		xhtp.onload = function() {
+		xhtp.onload = function () {
 			console.log(xhtp.responseText)
 			let result = JSON.parse(xhtp.responseText);
 			if (result.retCode == 'OK') {

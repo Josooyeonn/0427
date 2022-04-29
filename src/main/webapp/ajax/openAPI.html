@@ -1,20 +1,171 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta charset="UTF-8">
-<title>openAPI.html</title>
+	<meta charset="UTF-8">
+	<title>openAPI.html</title>
 </head>
+
 <body>
- <script>
- 	let url = `https://api.odcloud.kr/api/15077586/v1/centers?page=1&perPage=10&returnType=JSON&serviceKey=7Zbpkp%2BwZmukksSW%2FBkbf4BTqUvWpsqI1vvGVTTGIUxRTByJuBtEggGtvs1x0ss856oDOtxDZWP7T91Lo7M0%2FQ%3D%3D`
- 	let xhtp = new XMLHttpRequest();
- 	xhtp.open('get', url);
- 	xhtp.send();
- 	xhtp.onload = function(){
- 		let data = JSON.parse(xhtp.responseText);
- 		console.log(data)
- 	}
- 	
- </script>
+
+
+	<input type="text" id="sido" value="대전광역시"><button id="findBtn">찾기</button>
+
+	<hr>
+
+	<div id="show">
+		<table border="1">
+			<thead id="thead"></thead>
+			<tbody id="tbody"></tbody>
+		</table>
+	</div>
+
+
+
+
+	<script>
+	
+		let url = location.href;
+		console.log(url)
+		
+		
+		console.log('start');
+		let fields = ['id', 'sido', 'address', 'phoneNumber', 'zipCode'];
+
+		//this.
+		let obj = {
+			name: 'Hong',
+			age: 20,
+			showInfo: function () {
+				return this.name + ', ' + this.age;
+			} // 이벤트에서는 이벤트를 받는 대상이 this 
+		}
+
+		function globalFnc() {
+			console.log(this);
+			// 함수 안에서의 this는 window라는 가장 상위의 객체를 지정. 
+		}
+		globalFnc()
+
+		function init() {
+			let url =
+				`https://api.odcloud.kr/api/15077586/v1/centers?page=1&perPage=284&returnType=JSON&serviceKey=7Zbpkp%2BwZmukksSW%2FBkbf4BTqUvWpsqI1vvGVTTGIUxRTByJuBtEggGtvs1x0ss856oDOtxDZWP7T91Lo7M0%2FQ%3D%3D`
+
+			let result = ''; // 페이지가 로딩되면 이곳에 값을 넣음
+			let data = '';
+			let xhtp = new XMLHttpRequest(); // 비동기처리 방식으로 처리하는 대표적인 오브젝트(Asychronous Javacript ANd Xml :: AJAX), 오브젝트 형식
+			// 동기처리방식 : 하나씩 순차적으로 / 비동기처리방식 : 중복 처리 가능(코드 진행하면서 요청한 결과를 받아옴, 해당 오브젝트를 실행하는(xhtp) 함수 (XMLHttpRequest))
+			xhtp.open('get', url); // ('메소드', 속성)
+			xhtp.send();
+			xhtp.onload = loadCallBack; //서버로부터 받아오는 기능, 여기서 loadCallBack을 이용했기 때문에 하단에서 this 사용을 해야함.
+
+
+			let findBtn = document.getElementById("findBtn");
+			findBtn.addEventListener('click', findCallBack);
+			console.log(this)
+
+			// 화살표 함수 사용 시 해당 this는 이벤트를 받는 요소가 아님. window
+
+		}
+
+		init()
+
+
+		function findCallBack() {
+			console.log(this);
+
+			//callBack 함수
+			//filter 검색	-------------------------------------------------------------------------------------------
+			// 기능 구현. input.value 속성을 읽어와서 filterAry => 헤더, 바디.
+			let searchSido = document.getElementById("sido").value;
+			let filterAry = result.data.filter(function (elem) { // filter(함수)는 새로운 배열을 만들어줌.
+				//return elem.sido.startsWith(searchSido); // startsWith(문자)
+				return elem.sido.indexOf(searchSido) != -1; // 포함
+			});
+			//상단의 filterAry의 기능을 이용하여 조회.
+			makeBody(filterAry);
+
+			//입력값을 지워줌.
+			document.getElementById("sido").value = '';
+		}
+		//filter 검색	-------------------------------------------------------------------------------------------
+
+
+
+		function loadCallBack() {
+
+			// console.log('center')
+			result = JSON.parse(this.responseText); // 자기자신을 지목하는 this
+			// console.log(result)
+			// console.log("총 건수 : " + result.totalCount);
+
+			console.log(result.data[0])
+
+			result.data.forEach(function (elem) {
+				if (elem.sido == '서울특별시') {
+					// console.log(`id: ${elem.id}, center:${elem.centerName}`)
+				}
+
+			});
+
+			// console.clear();
+
+			let filterAry = result.data.filter(function (elem) { // filter(함수)는 새로운 배열을 만들어줌.
+				return elem.sido == "대전광역시"
+			});
+
+			// head
+
+			let head = document.getElementById('thead');
+			let tr = document.createElement('tr')
+			head.appendChild(tr);
+			fields.forEach(function (elem) {
+				let td = document.createElement('th');
+				td.innerHTML = elem.toUpperCase();
+				tr.appendChild(td);
+			})
+
+			makeBody(filterAry)
+
+		} // end of loadCallBack()
+
+
+		function makeBody(ary) { // ary : 배열값			
+
+			//이미 생성된 조회정보가 있으면 삭제.
+			let body = document.getElementById('tbody');
+			let childTr = document.querySelectorAll('#tbody>tr')
+
+			childTr.forEach(function (elem) {
+				body.removeChild(elem);
+			})
+
+			ary.forEach(function (center) {
+				let tr = document.createElement('tr');
+				body.appendChild(tr);
+
+				fields.forEach(function (elem) {
+					let td = document.createElement('td');
+					//address 필드일 경우에는 링크.
+					if (elem == 'address') {
+						let aTag = document.createElement('a');
+						aTag.setAttribute('href', `daumApi.html?x=${center.lat}&y=${center.lng}&z=${center.facilityName}`); 
+						aTag.setAttribute('target','_blank')
+						aTag.innerHTML = center[elem];
+						td.appendChild(aTag);
+					} else {
+						td.innerHTML = center[elem];
+					}
+					tr.appendChild(td);
+					
+					
+
+				})
+
+			});
+		}
+		// end of makeBody()
+	</script>
 </body>
+
 </html>
