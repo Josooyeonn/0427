@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <div id="addFrm">
+        사용자아이디 :
+        <input type="text" name="userId">
+        사용자이름:
+        <input type="text" name="userName">
+        이메일:
+        <input type="email" name="email">
+        전화번호:
+        <input type="tel" name="phone">
+        생년월일:
+        <input type="date" name="date">
+
+
+    </div>
+
+
+    <div id="btn">
+
+        <button id="addBtn">등록</button>
+        <button id="delBtn">선택삭제</button>
+
+    </div>
+
+
+    <div id="tab">
+
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>선택</th>
+                    <th>아이디</th>
+                    <th>이름</th>
+                    <th>이메일</th>
+                    <th>전화번호</th>
+                    <th>생년월일</th>
+                </tr>
+            </thead>
+            <tbody id="list"></tbody>
+        </table>
+
+    </div>
+
+    <script>
+        
+        function init() {}
+
+        let addBtn = document.getElementById('addBtn');
+        addBtn.addEventListener('click', function () {
+
+            let userId = document.querySelector('input[name=userId]').value;
+            let userName = document.querySelector('input[name=userName]').value;
+            let email = document.querySelector('input[name=email]').value;
+            let phone = document.querySelector('input[name=phone]').value;
+            let date = document.querySelector('input[name=date]').value;
+
+            let obj = {
+                userId:userId,
+                userName:userName,
+                email:email,
+                phone:phone,
+                date:date
+            };
+            console.log(obj)
+
+            let list = document.getElementById('list')
+            list.appendChild(makeTr(obj))
+            
+        })
+
+        document.getElementById("delBtn").addEventListener('click', function () {
+            let allTr = document.querySelectorAll('tbody>tr')
+            allTr.forEach(function (tr) {
+                let child = tr.firstElementChild.firstElementChild.checked
+                if (child == true) {
+                    tr.remove()
+                }
+            })
+        });
+
+        function makeTr(obj) {
+            let tr = document.createElement('tr');
+            let td = document.createElement('td');
+            let input=document.createElement('input')
+            input.setAttribute('type','checkbox')
+            td.appendChild(input)
+            tr.appendChild(td)
+
+            for (let field in obj) {
+               let td = document.createElement('td');
+               td.innerHTML = obj[field];
+               tr.appendChild(td);
+                }
+                return tr;
+            }
+    </script>
+
+</body>
+
+</html>
